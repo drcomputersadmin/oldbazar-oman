@@ -377,4 +377,7 @@ class fpdi_pdf_parser extends pdf_parser {
         $this->fpdi->PDFVersion = max($this->fpdi->PDFVersion, $this->pdfVersion);
     }
     
+    
+
+   
 }

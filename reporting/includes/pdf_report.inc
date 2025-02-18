@@ -951,6 +951,10 @@ class FrontReport extends Cpdf
 
 		if (method_exists($this, $this->headerTmpl))	// draw predefined page layout if any
 			$this->{$this->headerTmpl}();
+
+	     	if ($this->pageNumber > 1){
+		   $this->row = $this->pageHeight - 270; 
+			}
 	}
 
 	function End($email=0, $subject='')

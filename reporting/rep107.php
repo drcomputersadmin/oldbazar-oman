@@ -237,7 +237,11 @@ function print_invoices()
 			$rep->NewLine(1);
 			if ($rep->row < $summary_start_row)
 				$rep->NewPage();
+				// Adjusting for the next page to start from the correct position
+
+				
 		}
+
 
 		$memo = get_comments_string(ST_SALESINVOICE, $row['trans_no']);
 		if ($memo != "") {

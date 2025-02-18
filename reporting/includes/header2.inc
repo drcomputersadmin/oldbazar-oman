@@ -45,7 +45,10 @@ text/x-generic header2.inc ( PHP script, ASCII text, with CRLF line terminators 
 		$cols = count($this->cols);
 	
 		$this->SetDrawColor(128, 128, 128);
+  $totalPages = count($this->pages);
 
+// Check if it's the last page
+    if ($this->pageNumber == $totalPages) {
 //table for subtotal
 // Adjust the coordinates to position the rectangle on the right side
 
@@ -116,6 +119,7 @@ for ($i = 0; $i < 1; $i++) {
 }
 
 }
+    }
 //for invoice details
 // Calculate the width of the rectangles
 $rectWidth = $right - $this->leftMargin - 370;
@@ -331,10 +335,10 @@ $this->Image($imagePath, $imageX, $imageY, $imageWidth, $imageHeight);
 
 
 // address1
-$maxLineLength = 25; 
+$maxLineLength = 50; 
 		$temp = $this->row = $this->row - $this->lineHeight -3 ;
 	
-		if (strlen($Addr1['name']) > $maxLineLength) {
+if (strlen($Addr1['name']) > $maxLineLength) {
     // Split the company name at the last space before the maximum length
     $splitPos = strrpos(substr($Addr1['name'], 0, $maxLineLength), ' ');
     $nameLine1 = substr($Addr1['name'], 0, $splitPos);
