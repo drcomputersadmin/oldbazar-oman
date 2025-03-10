@@ -45,7 +45,7 @@ text/x-generic header2.inc ( PHP script, ASCII text, with CRLF line terminators 
 		$cols = count($this->cols);
 	
 		$this->SetDrawColor(128, 128, 128);
-  $totalPages = count($this->pages);
+  $totalPages = -1;
 
 // Check if it's the last page
     if ($this->pageNumber == $totalPages) {
@@ -120,6 +120,7 @@ for ($i = 0; $i < 1; $i++) {
 
 }
     }
+
 //for invoice details
 // Calculate the width of the rectangles
 $rectWidth = $right - $this->leftMargin - 370;
@@ -192,12 +193,15 @@ if ($this->l['a_meta_dir'] == 'rtl') { // avoid line overwrite in rtl language
 }
 elseif($doctype == ST_CUSTDELIVERY) {
 	 $this->LineTo(490, $iline5 + 30 - $topOffset, 490, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+
 }elseif($doctype == ST_PURCHORDER) {	
     $this->LineTo(535 + 4, $iline5 + 30 - $topOffset, 535 + 4, $iline7 + 30 - $topOffset + $tableHeightIncrease);
 }elseif($doctype == ST_CUSTPAYMENT) {
 	 $this->LineTo(490, $iline5 + 30 - $topOffset, 490, $iline7 + 30 - $topOffset + $tableHeightIncrease);
 }elseif($doctype == ST_STATEMENT) {
 	 $this->LineTo(490, $iline5 + 30 - $topOffset, 490, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+}elseif($doctype == ST_CUSTCREDIT) {
+	 $this->LineTo(530, $iline5 + 30 - $topOffset, 530, $iline7 + 30 - $topOffset + $tableHeightIncrease);
 
 }else{
 	 $this->LineTo(540 + 4, $iline5 + 30 - $topOffset, 540 + 4, $iline7 + 30 - $topOffset + $tableHeightIncrease);
@@ -238,10 +242,19 @@ if ($doctype == ST_CUSTDELIVERY) {
     $this->LineTo(170, $iline5 + 30 - $topOffset, 170, $iline7 + 30 - $topOffset + $tableHeightIncrease);
   
     $this->LineTo(230, $iline5 + 30 - $topOffset, 230, $iline7 + 30 - $topOffset + $tableHeightIncrease);
-    $this->LineTo(310, $iline5 + 30 - $topOffset, 310, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+    $this->LineTo(300, $iline5 + 30 - $topOffset, 300, $iline7 + 30 - $topOffset + $tableHeightIncrease);
     $this->LineTo(380, $iline5 + 30 - $topOffset, 380, $iline7 + 30 - $topOffset + $tableHeightIncrease);
 	  $this->LineTo(430, $iline5 + 30 - $topOffset, 430, $iline7 + 30 - $topOffset + $tableHeightIncrease);
-	   
+}elseif($doctype == ST_CUSTCREDIT){
+	
+   $this->LineTo(68, $iline5 + 30 - $topOffset, 68, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+    $this->LineTo(125, $iline5 + 30 - $topOffset, 125, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+    $this->LineTo(328, $iline5 + 30 - $topOffset, 328, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+    $this->LineTo(378, $iline5 + 30 - $topOffset, 378, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+    $this->LineTo(425, $iline5 + 30 - $topOffset, 425, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+    $this->LineTo(478, $iline5 + 30 - $topOffset, 478, $iline7 + 30 - $topOffset + $tableHeightIncrease);
+   
+   
 
 } else {
     // Original lines for other document types

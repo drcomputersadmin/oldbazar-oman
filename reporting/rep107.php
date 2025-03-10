@@ -178,7 +178,9 @@ function print_invoices()
 			if ($myrow2["quantity"] == 0)
 				continue;
 
-			$TaxAmount = round2($myrow2["unit_tax"], user_price_dec());
+			// $TaxAmount = round2($myrow2["unit_tax"], user_price_dec());
+
+			$TaxAmount = round2($myrow2["unit_tax"] * $myrow2["quantity"], user_price_dec());
 			$Net = round2(
 				$sign * ((1 - $myrow2["discount_percent"]) * $myrow2["unit_price"] * $myrow2["quantity"]),
 				user_price_dec()
