@@ -94,7 +94,7 @@ function print_invoices()
 	$aligns = array('center', 'left', 'left', 'center', 'center', 'left', 'left', 'center', 'left');
 
 	// $aligns = array('left',	'left',	'right', 'center', 'right', 'right', 'right');
-
+	
 
 	$params = array('comments' => $comments);
 

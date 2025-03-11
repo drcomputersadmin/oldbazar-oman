@@ -6,4 +6,14 @@
 */
 
 $installed_extensions = array (
+  2 => 
+  array (
+    'package' => 'mail',
+    'name' => 'mail',
+    'version' => '-',
+    'available' => '',
+    'type' => 'extension',
+    'path' => 'modules/mail',
+    'active' => false,
+  ),
 );

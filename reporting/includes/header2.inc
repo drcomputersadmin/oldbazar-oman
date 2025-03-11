@@ -163,6 +163,13 @@ $this->rect(
     $iline3 - $iline2, // Adjusted height for the rectangles to be at the top
     "D" // Draw border only
 );
+$this->rect(
+    $startX,
+    $topY - 101,
+    $rectWidth,
+    $iline3 - $iline2, // Adjusted height for the rectangles to be at the top
+    "D" // Draw border only
+);
 
 
 
@@ -172,7 +179,7 @@ $this->rect(
 		$col = $this->leftMargin+350;
 		for ($i = 0; $i < 1; $i++) {
     // Decrease the Y coordinates by the desired amount to reduce the height
-   $this->LineTo($col += $width + 15, $iline2 + 83 + 58, $col, $iline4 +64 +58);
+   $this->LineTo($col += $width + 15, $iline2 + 83 + 58, $col, $iline4 +64 +41);
 
 }
 
@@ -336,8 +343,7 @@ $this->Image($imagePath, $imageX, $imageY, $imageWidth, $imageHeight);
 
 		$this->NewLine(2);
 	
-		if ($this->pageNumber > 1)
-			$this->Text($mcol + 180, _("Page") . ' ' . $this->pageNumber);
+		
 		$this->row = $iline1 - $this->lineHeight +50;
 		$this->fontSize += 1;
 	    $this->font('bold');
@@ -430,6 +436,9 @@ if (strlen($Addr1['company']) > $maxLineLength) {
 	 	$this->Text($mcol + 90, _("DATE"));
 		
 		$this->Text($mcol + 210, sql2date($this->formData['document_date']));
+
+        
+
 		$this->NewLine(1.5);
 		
 
@@ -441,7 +450,19 @@ if (strlen($Addr1['company']) > $maxLineLength) {
 			if (empty($preparer)) $preparer = $user['user_id'];
 			$this->Text($mcol + 210, $preparer);
 		}	
-	
+
+
+        //comments
+
+	   $memo = get_comments_string(ST_SALESINVOICE,  $this->formData['trans_no']);
+       $this->NewLine(1.5);
+        $this->Text($mcol + 90, _("LPO NO"));
+		if ($memo != "") {
+			
+           
+			$this->Text($mcol + 210, $memo);
+
+		}
 		// Payment terms
 		
 
@@ -497,4 +518,5 @@ $this->row -= $imageHeight; // Adjust as needed based on the image height
 		$this->Text($mcol - 280, _("Old Bazaar Business L.L.C"));
 	 	$this->Text($mcol+100, _("RECIEVERS SIGNATURE"));
 		
-	
+	if ($this->pageNumber > 1)
+		  $this->Text($mcol + 250, _("Page") . ' ' . $this->pageNumber);

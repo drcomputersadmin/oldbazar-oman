@@ -1,0 +1,15 @@
+Package: classic
+Version: 2.4.1-4
+Type: theme
+Name: Theme classic
+Description: Optional Theme. A flat color classic menu.
+ Works excelent in all browsers. Good also in RTL languages.
+ Ok in Android Tablets, smartphones.
+ 2023-02-01. Higher font-size on higher screen resolution.
+ 2023-07-22. Color adjustments.
+Author: Joe Hunt <joe.hunt.consulting@gmail.com>
+Homepage: www.frontaccounting.com
+Maintenance: Joe Hunt <joe.hunt.consulting@gmail.com>
+InstallPath: themes/classic
+Filename: classic-2.4.1-4
+

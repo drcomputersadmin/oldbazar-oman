@@ -1,0 +1,15 @@
+Package: gradient
+Version: 2.4.1-1
+Type: theme
+Name: Theme Gradient
+Description: Optional Theme. Dynamic Horizontal Menu. With rounded corners.
+ Works excent in all browsers.
+ Excent in IOS. (one touch -> hover), (two touch -> click).
+ Fine in Android Tablets, smartphones.. (The click event has been converted to a Dashboard menu)).
+ 2023-01-25. Function add_access_extension was missing. Fixed.
+Author: Joe Hunt <joe.hunt.consulting@gmail.com>
+Homepage: www.frontaccounting.com
+Maintenance: Joe Hunt <joe.hunt.consulting@gmail.com>
+InstallPath: themes/gradient
+Filename: gradient-2.4.1-1
+

@@ -6,7 +6,17 @@
 	FA extension system documentation.
 */
 
-$next_extension_id = 1; // unique id for next installed extension
+$next_extension_id = 3; // unique id for next installed extension
 
 $installed_extensions = array (
+  2 => 
+  array (
+    'package' => 'mail',
+    'name' => 'mail',
+    'version' => '-',
+    'available' => '',
+    'type' => 'extension',
+    'path' => 'modules/mail',
+    'active' => false,
+  ),
 );

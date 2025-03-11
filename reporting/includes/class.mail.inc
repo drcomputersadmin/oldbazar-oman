@@ -1,34 +1,157 @@
 <?php
-/*
-    Name:           eMail
-    Description:    Simple sending eMail in text and HTML with CC, BCC and attachment
-    Version:        1.0
-    last modified:  2004-05-14
 
-    Autor:          Daniel K�fer
-    Homepage:       http://www.danielkaefer.de
+include_once($path_to_root . "/modules/mail/includes/PHPMailer/class.smtp.php");
+include_once($path_to_root . "/modules/mail/includes/PHPMailer/class.phpmailer.php");
 
-    Leave this header in this file!
------------------------------------------------------------------- 
- Updated: 2010-10-25
- Updated by: Michael Hahn (MPH)
- 
- Problem: The Suhosin patch for PHP was blocking the email before it ever reached
- the email server due to double line feeds (\n) in the header of the email.
- Also, the body of the message was included in the header. This would also
- trip the security measure everytime it spotted a double line feed.
- Fix: Remove any double line feed from the header info and seperate the body of 
- the message from the header.
- Other updates: I'm not sure about RFC compliance but, every other email I've look at had
- certain information included in double quotes. More than likely to avoid
- erroneous file naming. I tried to emulate this mindset.
- Added line length and EOL char for file chunking. For some reason without
- it there were extra line feeds in the chunked file.
 
- * Lots of fixes for FA
-*/
+class email {
+    public $phpmailer = null;
+    public $charset = 'ISO-8859-1';
 
-class email
+    public function __construct($name, $email) {
+	//create phpmailer object
+	$this->phpmailer = new PHPMailer;
+
+	//set from
+	$this->phpmailer->setFrom($email, $name);
+
+	//setup bcc if one is set
+	$bcc = get_company_pref('bcc_email');
+	if ($bcc)
+	    $this->phpmailer->addBCC($bcc);
+
+
+	//Tell PHPMailer what to use: php's mail or smtp
+	$_mail_type = get_company_pref('mail_type');
+	switch($_mail_type) {
+	    case 'SMTP':
+		$this->phpmailer->isSMTP();
+		break;
+	    case 'MAIL':
+	    default:
+		$this->phpmailer->isMail();
+		break;
+	}
+	//if we are sending via SMTP, make specific settings
+	if ($_mail_type == 'SMTP') {
+	    //Set the hostname of the mail server
+	    $this->phpmailer->Host = get_company_pref('smtp_host');
+
+	    //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
+	    $this->phpmailer->Port = get_company_pref('smtp_port');
+
+
+	    //Whether to use SMTP authentication
+	    $_smtp_username = get_company_pref('smtp_username');
+	    $_smtp_password = get_company_pref('smtp_password');
+	    if (!empty($_smtp_password) && !empty($_smtp_username)) {
+		$this->phpmailer->SMTPAuth = true;
+		$this->phpmailer->Username = $_smtp_username;
+		$this->phpmailer->Password = $_smtp_password;
+	    }
+
+	    //Set the encryption system to use - ssl (deprecated) or tls
+	    $_smtp_secure = get_company_pref('smtp_secure');
+	    switch($_smtp_secure) {
+		case 'ssl':
+		case 'tls':
+		    $this->phpmailer->SMTPSecure = $_smtp_secure;
+		default:
+		case 'none':
+		    //just do nothing
+		    //$this->phpmailer->SMTPSecure = $_smtp_secure;
+		    break;
+	    }
+
+	    //Enable SMTP debugging
+	    // 0 = off (for production use)
+	    // 1 = client messages
+	    // 2 = client and server messages
+	    $this->phpmailer->SMTPDebug = 0;
+
+	    //Ask for HTML-friendly debug output
+	    $this->phpmailer->Debugoutput = function($str, $level) {
+		error_log("DEBUG: class.mail.inc: PHPMailerdebug: $level: $str");
+
+	    };
+	}
+	
+
+
+
+
+
+
+
+
+    }
+
+    private function mailparse_rfc822($rfc822_email_string) {
+	$data = array();
+	// match all words and whitespace, will be terminated by '<'
+        $name = preg_match('/[\w\s]+/', $rfc822_email_string, $matches);
+        $data['name'] = trim($matches[0]);
+                
+        // extract parts between the two parentheses
+        $address = preg_match('/(?:<)(.+)(?:>)$/', $rfc822_email_string, $matches);
+    	$data['email'] = $matches[1];
+        
+        return $data;
+    }
+    
+    public function to($mail) {
+	error_log("DEBUG: sending mail to: $mail");
+	$data = $this->mailparse_rfc822($mail);
+
+	error_log("DEBUG: parsed mail:" . print_r($data, true));
+	
+	$this->phpmailer->addAddress($data['email'], $data['name']);
+    }
+    
+    public function cc($mail) {
+	$data = $this->mailparse_rfc822($mail);
+	$this->phpmailer->addCC($data['email'], $data['name']);
+    }
+    
+    public function bcc($mail) {
+	$data = $this->mailparse_rfc822($mail);
+	$this->phpmailer->addBCC($data['email'], $data['name']);
+    }
+    
+    public function subject($subject) {
+	$this->phpmailer->Subject = $subject;
+    }
+    
+    public function attachment($file) {
+	$this->phpmailer->addAttachment($file);
+    }
+    
+    public function text($text) {
+	$this->phpmailer->Body = $text;
+    }
+    
+    public function html($html) {
+	$this->phpmailer->msgHTML($html);
+    }
+    
+    public function send() {
+	$this->phpmailerCharSet = $this->charset;
+
+	//send the message, check for errors
+	if (!$this->phpmailer->send()) {
+	    error_log('Mailer error:' . $this->phpmailer->ErrorInfo);
+	    //echo "Mailer Error: " . $this->phpmailer->ErrorInfo;
+	    return 0;
+	} else {
+	    return 1;
+	}
+    }
+}
+
+
+
+
+class old_email_class
 {
     var $to = array();
     var $cc = array();
@@ -39,9 +162,9 @@ class email
     var $subject = "";
     var $body = "";
 	var $charset = 'ISO-8859-1';
-	var $add_params = "";
+	var $add_params;
 	
-    function __construct($name, $mail)
+    function email($name, $mail)
     {
         $this->boundary = md5(uniqid(time()));
 		$this->header = "From: $name <$mail>\n";
@@ -65,11 +188,9 @@ class email
     	$this->bcc[] = $mail;
     }
 
-    function attachment($file, $filename=null)
+    function attachment($file)
     {
-    	if (!isset($filename))
-    		$filename = basename($file);
-    	$this->attachment[$filename] = $file;
+		$this->attachment[] = $file;
     }
 
     function subject($subject)
@@ -99,8 +220,6 @@ class email
 		if ($filename == $file . '.zip') return 'application/x-zip-compressed';
 		$file = basename($filename, '.pdf');
 		if ($filename == $file . '.pdf') return 'application/pdf';
-		$file = basename($filename, '.xls'); 
-		if ($filename == $file . '.xls') return 'application/vnd.ms-excel'; 
 		$file = basename($filename, '.csv');
 		if ($filename == $file . '.csv') return 'application/vnd.ms-excel';
 		$file = basename($filename, '.tar');
@@ -118,30 +237,46 @@ class email
 
 	function send()
     {
-        // Add CC Recipients 
-		if (!empty($this->cc)) 
-			$this->header .= "Cc: " . implode(", ", $this->cc) . "\n" ; 
-
-		// Add BCC Recipients 
-		if (!empty($this->bcc)) 
-			$this->header .= "Bcc: " . implode(", ", $this->bcc) . "\n" ; 
+        // CC Empf�nger hinzuf�gen
+        $max = count($this->cc);
+        if ($max > 0)
+        {
+            $this->header .= "Cc: ".$this->cc[0];
+            for ($i = 1; $i < $max; $i++)
+            {
+                $this->header .= ", ".$this->cc[$i];
+            }
+            $this->header .= "\n";
+        }
+        // BCC Empf�nger hinzuf�gen
+        $max = count($this->bcc);
+        if ($max > 0)
+        {
+            $this->header .= "Bcc: ".$this->bcc[0];
+            for ($i = 1; $i < $max; $i++)
+            {
+                $this->header .= ", ".$this->bcc[$i];
+            }
+            $this->header .= "\n";
+        }
 		$this->header .= "Content-Type: multipart/mixed;\n boundary=\"$this->boundary\"\n";
 
-        // Add Attachments
-        if (!empty($this->attachment))
+        // Attachment hinzuf�gen
+        $max = count($this->attachment);
+        if ($max > 0)
         {
-            foreach ($this->attachment as $filename => $file)
+            for ($i = 0; $i < $max; $i++)
             {
-                $file = fread(fopen($file, "r"), filesize($file));
+                $file = fread(fopen($this->attachment[$i], "r"), filesize($this->attachment[$i]));
 				$this->body .= "--".$this->boundary."\n";
-				$this->body .= "Content-Type: " .$this->mime_type($file). "; name=\"".$filename."\"\n";
+				$this->body .= "Content-Type: " .$this->mime_type(basename($this->attachment[$i])). "; name=\"".basename($this->attachment[$i])."\"\n";
 				$this->body .= "Content-Transfer-Encoding: base64\n";
-				$this->body .= "Content-Disposition: attachment; filename=\"".$filename."\"\n\n";
+				$this->body .= "Content-Disposition: attachment; filename=\"".basename($this->attachment[$i])."\"\n\n";
 				$this->body .= chunk_split(base64_encode($file),"72","\n");
                 $file = "";
             }
         }
-		$this->body .= "--".$this->boundary."--\n";
+			$this->body .= "--".$this->boundary."--\n";
 
 		$ret = 0;
         foreach($this->to as $mail)
@@ -152,3 +287,4 @@ class email
         return $ret;
     }
 }
+?>

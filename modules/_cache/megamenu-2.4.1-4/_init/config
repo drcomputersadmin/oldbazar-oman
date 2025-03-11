@@ -1,0 +1,17 @@
+Package: megamenu
+Version: 2.4.1-4
+Type: theme
+Name: Theme megamenu
+Description: Optional Theme. Dynamic Horizontal CSS Menu.
+ Works excelent in all browsers. Seems ok in RTL languages.
+ Ok in Android Tablets, smartphones.. (For activating the Dynamic Menu,
+ Touch and press downwards. For activating the Dashboard just Touch the Main menu).
+ 2023-02-01. Higher font-size on higher screen resolution.
+ 2023-03-01. Optimized the Menu with mouse hovering.
+ 2023-07-22. Color Adjustments.
+Author: Joe Hunt <joe.hunt.consulting@gmail.com>
+Homepage: www.frontaccounting.com
+Maintenance: Joe Hunt <joe.hunt.consulting@gmail.com>
+InstallPath: themes/megamenu
+Filename: megamenu-2.4.1-4
+
